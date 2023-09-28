@@ -26,9 +26,26 @@ async def get_report(
         wrapper_services: Aiogoogle = Depends(get_service)
 ):
     closed_projects = await charity_project_crud.get_projects_by_completion_rate(session)
-    spreadsheetid = await spreadsheets_create(wrapper_services)
-    await set_user_permissions(spreadsheetid, wrapper_services)
-    await spreadsheets_update_value(spreadsheetid,
-                                    closed_projects,
-                                    wrapper_services)
+
+    try:
+        spreadsheetid = await spreadsheets_create(wrapper_services)
+    except Exception as e:
+        # Логирование ошибки
+        print(f"Ошибка при создании таблицы в Google Sheets: {e}")
+        return {"error": "Произошла ошибка при создании таблицы в Google Sheets"}
+
+    try:
+        await set_user_permissions(spreadsheetid, wrapper_services)
+    except Exception as e:
+        # Логирование ошибки
+        print(f"Ошибка при установке прав доступа к таблице: {e}")
+        return {"error": "Произошла ошибка при установке прав доступа к таблице"}
+
+    try:
+        await spreadsheets_update_value(spreadsheetid, closed_projects, wrapper_services)
+    except Exception as e:
+        # Логирование ошибки
+        print(f"Ошибка при обновлении данных в таблице: {e}")
+        return {"error": "Произошла ошибка при обновлении данных в таблице"}
+
     return closed_projects

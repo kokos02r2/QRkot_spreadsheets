@@ -1,1 +1,23 @@
-Generic single-database configuration with an async dbapi.
+Alembic представляет собой легковесный и мощный инструмент для создания и управления миграциями базы данных в проектах, использующих SQLAlchemy.
+
+## Основные команды для работы с проектом
+
+Создать новую миграцию:
+
+```alembic revision --autogenerate -m "Описание миграции"```
+
+Применить все миграции:
+
+```alembic upgrade head```
+
+Откатить на одну миграцию:
+
+```alembic downgrade -1```
+
+Текущий статус миграции:
+
+```alembic current```
+
+История миграций:
+
+```alembic history```
